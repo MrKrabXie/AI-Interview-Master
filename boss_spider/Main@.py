@@ -10,19 +10,20 @@ import os
 # ============================
 # 1. 设置 SQLite 数据库 (Set up SQLite Database)
 # ============================
-db_file = 'scraped_data.db'
+db_file = '../scraped_data.db'
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 
 # 创建保存详情数据的表（如果不存在则创建）
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS detail_data (
+CREATE TABLE IF NOT EXISTS boss_interview_questions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     securityFormId TEXT,
     linkUrl TEXT,
     content TEXT,
     answer TEXT,
     detail_response TEXT,
+    is_answer_by_ai integer default 0,
     scraped_time INTEGER
 )
 ''')
@@ -141,7 +142,7 @@ for page in range(start_page, end_page + 1):
 
             # 将获取的数据保存到 SQLite 数据库
             cursor.execute('''
-                INSERT INTO detail_data (securityFormId, linkUrl, content, answer, detail_response, scraped_time)
+                INSERT INTO boss_interview_questions (securityFormId, linkUrl, content, answer, detail_response, scraped_time)
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', (securityFormId, link_url, content, selected_answer, detail_response_text, int(time.time())))
             conn.commit()
